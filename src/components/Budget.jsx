@@ -1,11 +1,21 @@
+'use client'
+
 import React from "react";
 import ProgressBar from "./ProgressBar";
+import { useState } from "react";
 import { calculateProgress, calculateSpent } from "@/utility/utils";
+import BudgetOptions from "./BudgetOptions";
 
 export default function Budget({ budget }) {
   const progressPercentage = calculateProgress(budget[1], budget.slice(3));
   const spentValue = calculateSpent(budget.slice(3));
-  console.log(budget);
+  const [openOptions, setOpenOptions] = useState(false)
+  // console.log(budget)
+
+  async function deleteBudget(){
+      // const response = await fetch('/api/budget')
+  }
+
   return (
     <div className="bg-white h-fit p-10">
       {
@@ -17,15 +27,21 @@ export default function Budget({ budget }) {
             ></span>{" "}
             <b>{budget[0][0].toUpperCase() + budget[0].slice(1)}</b>
           </div>
-          <div>
-            <button>
+          <div className="relative">
+            <button onClick={() => setOpenOptions(true)}>
               <img src="/assets/images/icon-ellipsis.svg" />
             </button>
+            {
+              openOptions ?
+              <BudgetOptions deleteBudget={deleteBudget} />
+              :
+              <></>
+            }
           </div>
         </div>
       }
       <div className="my-5 text-sm text-LabelColor">
-        Minimum of ${budget[1]}{" "}
+        Maximum of ${budget[1]}{" "}
       </div>
       {budget.length > 3 ? (
         <div>

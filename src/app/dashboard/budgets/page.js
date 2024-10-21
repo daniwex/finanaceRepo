@@ -54,6 +54,7 @@ export default function page() {
         const req = await fetch("/api/budget");
         if (req.ok) {
           const res = await req.json();
+          // console.log(res)
           setBudgets(res.budgets);
           setTransactions(res.transaction);
           const d = [
@@ -69,11 +70,13 @@ export default function page() {
               el.category,
               el.theme,
               el.spend,
+              el._id,
             ]),
             spending: d,
           };
+          // console.log(data)
           const m = aggregateTable(data);
-          const j = budgetInfo(data)
+          const j = budgetInfo(data);
           setChartData(data);
           setSummary(m);
           setLoadBudgets(false);
@@ -97,20 +100,25 @@ export default function page() {
           Add New Budget
         </button>
       </div>
-      <div className="block sm:flex mt-10">
-        <div className="h-fit py-10 px-5 bg-white grid grid-col-1 sm:w-2/4 sm:mr-5">
-          <div className="flex justify-center w-full">
-            <Piechart data={chartData} />
+      {!chartData || !summary ? (
+        <div className="w-full h-screen flex justify-center items-center text-2xl">Loading</div>
+      ) : (
+        <div className="block sm:flex mt-10">
+          <div className="h-fit py-10 px-5 bg-white grid grid-col-1 sm:w-2/4 sm:mr-5">
+            <div className="flex justify-center w-full">
+              <Piechart data={chartData} />
+            </div>
+            <div className="text-left mt-14">
+              <h2 className="font-bold text-lg">Spending Summary</h2>
+              <Summary data={summary} />
+            </div>
           </div>
-          <div className="text-left mt-14">
-            <h2 className="font-bold text-lg">Spending Summary</h2>
-            <Summary data={summary} />
+          <div className="sm:w-2/4">
+            {data ? <BudgetsContainer data={data} /> : <></>}
           </div>
         </div>
-        <div className="sm:w-2/4">
-          {data ? <BudgetsContainer data={data} /> : <></>}
-        </div>
-      </div>
+      )}
+
       {openModal ? (
         <ModalBudget
           closeBtn={() => setOpenModal(false)}

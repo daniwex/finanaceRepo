@@ -15,7 +15,7 @@ export default function ModalTransaction({
   onchangeRecurring,
 }) {
   return (
-    <div className="absolute top-0 w-full left-0 bg-[#1b1818a6] h-full  flex sm:justify-end pt-20 sm:px-2 sm:py-2">
+    <div className="absolute top-0 w-full z-20 left-0 bg-[#1b1818a6] h-full flex sm:justify-end pt-20 sm:px-2 sm:py-2">
       <div className="sm:h-full w-full sm:w-2/6 bg-white text-black rounded-t-2xl sm:rounded-lg py-10 px-5 sm:p-5">
         <div className="flex justify-between">
           <span>Add New Transaction</span>

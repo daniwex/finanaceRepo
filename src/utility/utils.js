@@ -29,7 +29,6 @@ export const budgetInfo = (data) => {
     }
   } 
   result.push(obj)  
- // console.log(result)
   return result
 }
 

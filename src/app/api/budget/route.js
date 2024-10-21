@@ -36,3 +36,7 @@ export const GET = async (req, res) => {
         console.log(error)
     }
 }
+
+export const DELETE = async(req, res) => {
+  const budgetId = await req.json()
+}

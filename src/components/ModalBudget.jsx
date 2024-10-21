@@ -11,7 +11,7 @@ export default function ModalBudget({
   onchangeTheme
 }) {
   return (
-    <div className="absolute top-0 w-full left-0 bg-[#1b1818a6] h-screen overflow-y-hidden flex place-content-center place-items-center px-5 sm:px-0">
+    <div className="absolute top-0 w-full left-0 bg-[#1b1818a6] h-screen overflow-y-hidden flex place-content-center z-20 place-items-center px-5 sm:px-0">
       <div className="bg-white h-fit w-fit px-7 py-4">
         <div className="flex justify-between">
           <h2>Add New Budget</h2>
