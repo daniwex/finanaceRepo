@@ -2,19 +2,29 @@
 
 import React from "react";
 import ProgressBar from "./ProgressBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { calculateProgress, calculateSpent } from "@/utility/utils";
 import BudgetOptions from "./BudgetOptions";
 
-export default function Budget({ budget }) {
-  const progressPercentage = calculateProgress(budget[1], budget.slice(3));
-  const spentValue = calculateSpent(budget.slice(3));
+export default function Budget({ budget, handleDeleteBudget }) {
+  const progressPercentage = calculateProgress(budget[2], budget.slice(4));
+  const spentValue = calculateSpent(budget.slice(4));
   const [openOptions, setOpenOptions] = useState(false)
+  const [refresh, setFresh] = useState(false)
   // console.log(budget)
 
-  async function deleteBudget(){
-      // const response = await fetch('/api/budget')
-  }
+
+  useEffect(() => {
+    // Perform some side effect here, e.g., fetching additional data
+    // This is just an example, replace with actual logic if needed
+    console.log("Budget component updated");
+
+    // Cleanup function if needed
+    return () => {
+      console.log("Budget component cleanup");
+    };
+  }, [refresh]);
+
 
   return (
     <div className="bg-white h-fit p-10">
@@ -22,18 +32,18 @@ export default function Budget({ budget }) {
         <div className="flex justify-between items-center">
           <div className="relative flex items-center">
             <span
-              style={{ backgroundColor: budget[2] }}
+              style={{ backgroundColor: budget[3] }}
               className={`left-0 h-4 w-4 rounded-full mr-2`}
             ></span>{" "}
             <b>{budget[0][0].toUpperCase() + budget[0].slice(1)}</b>
           </div>
           <div className="relative">
-            <button onClick={() => setOpenOptions(true)}>
+            <button onClick={() => setOpenOptions(openOptions => !openOptions)}>
               <img src="/assets/images/icon-ellipsis.svg" />
             </button>
             {
               openOptions ?
-              <BudgetOptions deleteBudget={deleteBudget} />
+              <BudgetOptions deleteBudget={() => handleDeleteBudget(budget[1])} />
               :
               <></>
             }
@@ -41,15 +51,15 @@ export default function Budget({ budget }) {
         </div>
       }
       <div className="my-5 text-sm text-LabelColor">
-        Maximum of ${budget[1]}{" "}
+        Maximum of ${budget[2]}{" "}
       </div>
       {budget.length > 3 ? (
         <div>
-          <ProgressBar bgColor={budget[2]} progress={progressPercentage} />
+          <ProgressBar bgColor={budget[3]} progress={progressPercentage} />
           <div className="flex justify-between my-4 text-sm">
             <div className="flex w-1/2">
               <span
-                style={{ backgroundColor: budget[2] }}
+                style={{ backgroundColor: budget[3] }}
                 className="relative left-0 mr-2 h-full w-1"
               ></span>
               <div className="text-LabelColor flex flex-col">
@@ -61,7 +71,7 @@ export default function Budget({ budget }) {
               <span className="relative left-0 mr-2 h-full w-1 bg-beige_100"></span>
               <div className="text-LabelColor flex flex-col">
                 <span>Remaining</span>
-                <span className="text-black">${budget[1] - spentValue}</span>
+                <span className="text-black">${budget[2] - spentValue}</span>
               </div>
             </div>
           </div>
@@ -69,7 +79,7 @@ export default function Budget({ budget }) {
             <div className="mb-2">
               <b> Latest Spending</b>
             </div>
-            {budget.slice(3).map((el) => (
+            {budget.slice(4).map((el) => (
               <div className="flex justify-between mb-3 border-b pb-1">
                 <div>
                   <b className="text-sm">{el[1]} </b>

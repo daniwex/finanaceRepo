@@ -16,8 +16,8 @@ export default function page() {
   const [transactions, setTransactions] = useState();
   const [chartData, setChartData] = useState([]);
   const [summary, setSummary] = useState();
-  const [loadBugets, setLoadBudgets] = useState(false);
-  const [data, setData] = useState();
+  const [loadBudgets, setLoadBudgets] = useState(false);
+  const [data, setData] = useState([]);
 
   async function submit(e) {
     e.preventDefault();
@@ -47,6 +47,18 @@ export default function page() {
       console.log(error);
     }
   }
+  async function handleDeleteBudget(budgetId){
+    const data = JSON.stringify (budgetId)
+      try {
+        const req = await fetch("/api/budget", {
+          method: "DELETE",
+          body: data
+        })
+        setLoadBudgets(true);
+      } catch (error) {
+        
+      }
+  }
 
   useEffect(() => {
     async function getData() {
@@ -66,7 +78,7 @@ export default function page() {
             ]),
           ];
           const data = {
-            budget: res.budgets.map((el, index) => [
+            budget: res.budgets.map((el, _) => [
               el.category,
               el.theme,
               el.spend,
@@ -74,7 +86,6 @@ export default function page() {
             ]),
             spending: d,
           };
-          // console.log(data)
           const m = aggregateTable(data);
           const j = budgetInfo(data);
           setChartData(data);
@@ -87,7 +98,7 @@ export default function page() {
       }
     }
     getData();
-  }, [loadBugets]);
+  }, [loadBudgets]);
 
   return (
     <div className="p-5">
@@ -114,7 +125,7 @@ export default function page() {
             </div>
           </div>
           <div className="sm:w-2/4">
-            {data ? <BudgetsContainer data={data} /> : <></>}
+            {data ? <BudgetsContainer data={data} handleDeleteBudget={handleDeleteBudget} /> : <></>}
           </div>
         </div>
       )}

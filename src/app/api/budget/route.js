@@ -39,4 +39,12 @@ export const GET = async (req, res) => {
 
 export const DELETE = async(req, res) => {
   const budgetId = await req.json()
+  try {
+    await connectMongoose();
+    const b = await budget.findByIdAndDelete(budgetId)
+    return NextResponse.json({message:"Budget deleted"},{status: 201})
+
+  } catch (error) {
+    console.log(error)
+  }
 }

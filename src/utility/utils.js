@@ -21,7 +21,7 @@ export const budgetInfo = (data) => {
   const budgets = data.budget
   const transaction = data.spending[0]
   for(let i=0;i<budgets.length;i++){
-    obj[budgets[i][0]] = [budgets[i][0],budgets[i][2], budgets[i][1]]
+    obj[budgets[i][0]] = [budgets[i][0],budgets[i][3] ,budgets[i][2], budgets[i][1]]
   } 
   for(let i=0;i<transaction.length;i++){
     if(transaction[i][0] in obj){
