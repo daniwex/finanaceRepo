@@ -2,6 +2,7 @@ import React from "react";
 import Item from "./Item";
 
 export default function Items({ items }) {
+  console.log(items);
   return (
     <table className="mt-10 w-full text-left">
       <thead className="h-10 border-b">
@@ -13,15 +14,19 @@ export default function Items({ items }) {
         </tr>
       </thead>
       <tbody>
-        {items.map((el, index) => (
-          <Item
-            sender={el.transactionName}
-            category={el.transactionCategory}
-            date={el.transactionDate}
-            amount={el.transactionAmount}
-            key={index}
-          />
-        ))}
+        {items ? (
+          items.map((el, index) => (
+            <Item
+              sender={el.transactionName}
+              category={el.transactionCategory}
+              date={el.transactionDate}
+              amount={el.transactionAmount}
+              key={index}
+            />
+          ))
+        ) : (
+          <></>
+        )}
       </tbody>
     </table>
   );

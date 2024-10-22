@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
 import React from "react";
 import ProgressBar from "./ProgressBar";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { calculateProgress, calculateSpent } from "@/utility/utils";
 import BudgetOptions from "./BudgetOptions";
 
@@ -10,24 +10,9 @@ export default function Budget({ budget, handleDeleteBudget }) {
   const progressPercentage = calculateProgress(budget[2], budget.slice(4));
   const spentValue = calculateSpent(budget.slice(4));
   const [openOptions, setOpenOptions] = useState(false)
-  const [refresh, setFresh] = useState(false)
-  // console.log(budget)
-
-
-  useEffect(() => {
-    // Perform some side effect here, e.g., fetching additional data
-    // This is just an example, replace with actual logic if needed
-    console.log("Budget component updated");
-
-    // Cleanup function if needed
-    return () => {
-      console.log("Budget component cleanup");
-    };
-  }, [refresh]);
-
 
   return (
-    <div className="bg-white h-fit p-10">
+    <div className="bg-white h-fit p-10 rounded-lg">
       {
         <div className="flex justify-between items-center">
           <div className="relative flex items-center">
@@ -38,15 +23,18 @@ export default function Budget({ budget, handleDeleteBudget }) {
             <b>{budget[0][0].toUpperCase() + budget[0].slice(1)}</b>
           </div>
           <div className="relative">
-            <button onClick={() => setOpenOptions(openOptions => !openOptions)}>
+            <button
+              onClick={() => setOpenOptions(!openOptions)}
+            >
               <img src="/assets/images/icon-ellipsis.svg" />
             </button>
-            {
-              openOptions ?
-              <BudgetOptions deleteBudget={() => handleDeleteBudget(budget[1])} />
-              :
+            {openOptions ? (
+              <BudgetOptions
+                deleteBudget={() => handleDeleteBudget(budget[1])}
+              />
+            ) : (
               <></>
-            }
+            )}
           </div>
         </div>
       }
@@ -75,12 +63,12 @@ export default function Budget({ budget, handleDeleteBudget }) {
               </div>
             </div>
           </div>
-          <div className="p-5 bg-beige_100">
+          <div className="p-5 bg-beige_100 rounded-lg">
             <div className="mb-2">
               <b> Latest Spending</b>
             </div>
-            {budget.slice(4).map((el) => (
-              <div className="flex justify-between mb-3 border-b pb-1">
+            {budget.slice(4).map((el, index) => (
+              <div className={`flex justify-between mb-3  ${index != budget.slice(4).length - 1 ? 'border-b' : '' } pb-1`}>
                 <div>
                   <b className="text-sm">{el[1]} </b>
                 </div>

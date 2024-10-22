@@ -2,23 +2,25 @@
 
 import Items from "@/components/Items";
 import ModalTransaction from "@/components/ModalTransaction";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { debounce } from "lodash";
 
-export default function page() {
+export default function Page() {
   const [showModel, setShowModel] = useState(false);
   const [transactionName, setTransactionName] = useState("");
-  const [transactionCategory, setTransactionCategory] =
-    useState("entertainment");
+  const [transactionCategory, setTransactionCategory] = useState("entertainment");
   const [transactionDate, setTransactionDate] = useState("");
   const [transactionAmount, setTransactionAmount] = useState("");
   const [transactionRecurring, setTransactionRecurring] = useState(false);
   const [message, setMessage] = useState("");
-  const [transactions, setTransactions] = useState();
-  const [refresh, setRefresh] = useState(false)
+  const [transactions, setTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [refresh, setRefresh] = useState(false);
 
   async function submit(e) {
     e.preventDefault();
-    if (transactionDate == "" || transactionAmount == "" || transactionName == "") {
+    if (!transactionDate || !transactionAmount || !transactionName) {
       return;
     }
     const data = {
@@ -26,7 +28,7 @@ export default function page() {
       transactionCategory,
       transactionDate,
       transactionAmount,
-      transactionRecurring: transactionRecurring == "on" ? true : false,
+      transactionRecurring: transactionRecurring === "on",
     };
     try {
       const req = await fetch("/api/transactions", {
@@ -42,7 +44,7 @@ export default function page() {
         setTransactionDate("");
         setTransactionAmount("");
         setTransactionRecurring(false);
-        setRefresh(true)
+        setRefresh(!refresh);
       }
     } catch (error) {
       console.log(error);
@@ -56,14 +58,34 @@ export default function page() {
         if (req.ok) {
           const res = await req.json();
           setTransactions(res);
-          setRefresh(false)
+          setFilteredTransactions(res); 
+          setRefresh(false);
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
     getData();
   }, [refresh]);
+
+  const filterTransactions = useCallback(
+    debounce((term) => {
+      if (!term) {
+        setFilteredTransactions(transactions); 
+      } else {
+        setFilteredTransactions(
+          transactions.filter((transaction) =>
+            transaction.transactionName.toLowerCase().includes(term.toLowerCase())
+          )
+        );
+      }
+    }, 300),
+    [transactions]
+  );
+
+  useEffect(() => {
+    filterTransactions(searchTerm);
+  }, [searchTerm, transactions, filterTransactions]);
 
   return (
     <div className="p-5">
@@ -82,46 +104,43 @@ export default function page() {
             type="search"
             className="block sm:inline w-full border text-sm placeholder:text-xs px-2 py-2 sm:w-1/4 rounded-md"
             placeholder="Search transaction"
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <div className="flex my-4 sm:my-0 justify-evenly">
             <div className="text-xs sm:text-sm">
               <label>Sort by</label>
               <select className="border border-grey_500 px-2 py-1 mx-1 sm:mx-3 rounded-md">
                 <option>Latest</option>
-                <option>Latest</option>
+                <option>Oldest</option>
               </select>
             </div>
             <div className="text-xs sm:text-sm">
               <label>Category</label>
               <select className="border border-grey_500 px-2 py-1 mx-1 sm:mx-3 rounded-md">
-                <option>All transaction</option>
-                <option>Latest</option>
+                <option>All transactions</option>
+                <option>Entertainment</option>
+                <option>Groceries</option>
+                <option>Utilities</option>
               </select>
             </div>
           </div>
         </div>
-        {
-          transactions 
-          ?
-          <Items items={transactions.transaction} />
-          :
-          <></>
-        }
+        {filteredTransactions.length > 0 ? (
+          <Items items={filteredTransactions} />
+        ) : (
+          <p>No transactions available.</p>
+        )}
       </div>
-      {showModel ? (
+      {showModel && (
         <ModalTransaction
           closeBtn={() => setShowModel(false)}
           onsubmit={(e) => submit(e)}
           onchangeTransactionName={(e) => setTransactionName(e.target.value)}
-          onchangeTransactionCategory={(e) =>
-            setTransactionCategory(e.target.value)
-          }
+          onchangeTransactionCategory={(e) => setTransactionCategory(e.target.value)}
           onchangeTransactionDate={(e) => setTransactionDate(e.target.value)}
           onchangeAmount={(e) => setTransactionAmount(e.target.value)}
-          onchangeRecurring={(e) => setTransactionRecurring(e.target.value)}
+          onchangeRecurring={(e) => setTransactionRecurring(e.target.checked)}
         />
-      ) : (
-        <></>
       )}
     </div>
   );

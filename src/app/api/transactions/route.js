@@ -44,7 +44,7 @@ export const GET = async (req, res) => {
         if(!t){
             return NextResponse.json({message:"No transaction found"},{status:404})
         }
-        return NextResponse.json({transaction:t},{status:200})
+        return NextResponse.json(t,{status:200})
     } catch (error) {
         console.log(error)
     }

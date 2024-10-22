@@ -115,7 +115,7 @@ export default function page() {
         <div className="w-full h-screen flex justify-center items-center text-2xl">Loading</div>
       ) : (
         <div className="block sm:flex mt-10">
-          <div className="h-fit py-10 px-5 bg-white grid grid-col-1 sm:w-2/4 sm:mr-5">
+          <div className="h-fit py-10 px-5 bg-white grid grid-col-1 sm:w-2/5 sm:mr-5 rounded-lg">
             <div className="flex justify-center w-full">
               <Piechart data={chartData} />
             </div>
@@ -124,7 +124,7 @@ export default function page() {
               <Summary data={summary} />
             </div>
           </div>
-          <div className="sm:w-2/4">
+          <div className="sm:w-3/6">
             {data ? <BudgetsContainer data={data} handleDeleteBudget={handleDeleteBudget} /> : <></>}
           </div>
         </div>

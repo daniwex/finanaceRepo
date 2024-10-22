@@ -13,7 +13,7 @@ export default function Navbar() {
             href="/dashboard"
             className={`flex justify-center sm:justify-start py-4 sm:py-3  sm:px-5 ${pathname == "/dashboard" ?  'bg-white rounded-t-xl sm:rounded-tl-none sm:rounded-r-xl font-bold' : '' } `}
             >
-             <img src="/assets/images/icon-nav-overview.svg" className="sm:pr-4" />
+             <img src="/assets/images/icon-nav-overview.svg" className={`sm:pr-4 ${pathname == "/dasboard" ? 'bg-orange-600' : ''}`}/>
              <span className="hidden sm:block">Overview</span>
         </Link>
         <Link 
