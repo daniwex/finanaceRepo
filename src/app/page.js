@@ -1,30 +1,34 @@
-'use client'
-
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function Home() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
   async function submit(e) {
-    e.preventDefault()
-    if(email == "" || password == ""){
-      return
+    e.preventDefault();
+    if (email == "" || password == "") {
+      return;
     }
     try {
-      const data = {email, password}
+      const data = { email, password };
       const request = await fetch("/api/login", {
-        method:"POST",
-        body:JSON.stringify(data)
-      })
-      if(request.ok){
-        router.push("/dashboard")
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      const res = await request.json();
+      if (request.ok) {
+        router.replace("/dashboard");
+      }
+      if (res.message) {
+        setErrorMessage(res.message);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -49,13 +53,21 @@ export default function Home() {
           <div className="sm:w-3/4 w-full">
             <h2 className="font-bold text-3xl">Welcome back.</h2>
             <form className="mt-20 mb-10 sm:w-full" onSubmit={(e) => submit(e)}>
+              {errorMessage ? (
+                <div className="text-red-700 text-sm mb-2">{errorMessage}</div>
+              ) : (
+                <></>
+              )}
               <div className="mb-4">
                 <label className="text-LabelColor text-sm">Email</label>
                 <input
                   autoComplete="email"
                   type="email"
                   className="w-full h-12 border mt-2 p-2"
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setErrorMessage("");
+                  }}
                   value={email}
                 />
               </div>
@@ -65,7 +77,10 @@ export default function Home() {
                   autoComplete="current-password"
                   type="password"
                   className="w-full h-12 border mt-2 p-2"
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setErrorMessage("");
+                  }}
                   value={password}
                 />
               </div>

@@ -8,7 +8,8 @@ import { debounce } from "lodash";
 export default function Page() {
   const [showModel, setShowModel] = useState(false);
   const [transactionName, setTransactionName] = useState("");
-  const [transactionCategory, setTransactionCategory] = useState("entertainment");
+  const [transactionCategory, setTransactionCategory] =
+    useState("entertainment");
   const [transactionDate, setTransactionDate] = useState("");
   const [transactionAmount, setTransactionAmount] = useState("");
   const [transactionRecurring, setTransactionRecurring] = useState(false);
@@ -16,6 +17,7 @@ export default function Page() {
   const [transactions, setTransactions] = useState([]);
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [animateForm, setAnimateForm] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
   async function submit(e) {
@@ -58,7 +60,7 @@ export default function Page() {
         if (req.ok) {
           const res = await req.json();
           setTransactions(res);
-          setFilteredTransactions(res); 
+          setFilteredTransactions(res);
           setRefresh(false);
         }
       } catch (error) {
@@ -71,11 +73,13 @@ export default function Page() {
   const filterTransactions = useCallback(
     debounce((term) => {
       if (!term) {
-        setFilteredTransactions(transactions); 
+        setFilteredTransactions(transactions);
       } else {
         setFilteredTransactions(
           transactions.filter((transaction) =>
-            transaction.transactionName.toLowerCase().includes(term.toLowerCase())
+            transaction.transactionName
+              .toLowerCase()
+              .includes(term.toLowerCase())
           )
         );
       }
@@ -93,7 +97,10 @@ export default function Page() {
         <h2 className="text-xl">Transactions</h2>
         <button
           className="text-xs h-fit w-fit px-2 py-2 bg-grey_500 text-white"
-          onClick={() => setShowModel(true)}
+          onClick={() => {
+            setShowModel(true);
+            setAnimateForm(true);
+          }}
         >
           Add New Transaction
         </button>
@@ -131,17 +138,22 @@ export default function Page() {
           <p>No transactions available.</p>
         )}
       </div>
-      {showModel && (
-        <ModalTransaction
-          closeBtn={() => setShowModel(false)}
-          onsubmit={(e) => submit(e)}
-          onchangeTransactionName={(e) => setTransactionName(e.target.value)}
-          onchangeTransactionCategory={(e) => setTransactionCategory(e.target.value)}
-          onchangeTransactionDate={(e) => setTransactionDate(e.target.value)}
-          onchangeAmount={(e) => setTransactionAmount(e.target.value)}
-          onchangeRecurring={(e) => setTransactionRecurring(e.target.checked)}
-        />
-      )}
+      <div className="transition ease-linear delay-100">
+        {showModel && (
+          <ModalTransaction
+            closeBtn={() => setShowModel(false)}
+            onsubmit={(e) => submit(e)}
+            onchangeTransactionName={(e) => setTransactionName(e.target.value)}
+            onchangeTransactionCategory={(e) =>
+              setTransactionCategory(e.target.value)
+            }
+            onchangeTransactionDate={(e) => setTransactionDate(e.target.value)}
+            onchangeAmount={(e) => setTransactionAmount(e.target.value)}
+            onchangeRecurring={(e) => setTransactionRecurring(e.target.checked)}
+            animateForm={animateForm}
+          />
+        )}
+      </div>
     </div>
   );
 }

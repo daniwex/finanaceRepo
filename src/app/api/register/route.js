@@ -9,6 +9,10 @@ export const POST = async (req, res) => {
     const {email, password} = await req.json();
     try {
         await connectMongoose();
+        const getUser = await user.findOne({email})
+        if(getUser){
+            return NextResponse.json({message:"Account already exists"},{status: 404})
+        }
         const salt = await bcryptjs.genSalt(10)
         const pass = await bcryptjs.hash(password, salt)
         const newUser = await new user({email, password:pass})

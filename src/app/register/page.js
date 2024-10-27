@@ -1,35 +1,51 @@
-'use client'
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function page() {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [nPassword, setNPassword] = useState("")
-    let [error, setError] = useState(false)
-    const router = useRouter()
-    async function submit(e) {
-        e.preventDefault()
-        if(password != nPassword){
-            return
-        }
-        try {
-            const data = {email, password}
-            console.log(data)
-            const request = await fetch("/api/register", {
-                method: "POST",
-                body: JSON.stringify(data)
-            })
-            const res = request.ok
-            if(res){
-                router.push("/dashboard")
-            }
-        } catch (error) {
-            console.log(error)
-        }
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [nPassword, setNPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
+
+  async function submit(e) {
+    e.preventDefault();
+
+    if (password !== nPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
     }
+    if (!email || !password || !nPassword) {
+      setErrorMessage("All fields are required.");
+      return;
+    }
+
+    try {
+      const data = { email, password };
+      const request = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const serverResponse = await request.json();
+
+      if (request.ok) {
+        router.replace("/dashboard");
+      } else {
+        setErrorMessage(serverResponse.message || "Registration failed.");
+      }
+    } catch (error) {
+      console.log(error);
+      setErrorMessage("An error occurred. Please try again.");
+    }
+  }
+
 
   return (
     <div className="">
@@ -52,34 +68,50 @@ export default function page() {
           <div className="sm:w-3/4 w-full">
             <h2 className="font-bold text-3xl">Register your Account.</h2>
             <form onSubmit={(e) => submit(e)} className="mt-20 mb-10 sm:w-full">
+              {errorMessage ? (
+                <div className="text-red-700 text-sm mb-2">{errorMessage}</div>
+              ) : (
+                <></>
+              )}
               <div className="mb-4">
                 <label className="text-LabelColor text-sm">Email</label>
-                <input
-                  autoComplete="email"
-                  type="email"
-                  className="w-full h-12 border mt-2 p-2"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
-                />
+                 <input
+                autoComplete="email"
+                type="email"
+                className="w-full h-12 border mt-2 p-2"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrorMessage("");
+                }}
+                value={email}
+              />
               </div>
               <div className="mb-4">
                 <label className="text-LabelColor text-sm">Password</label>
                 <input
-                  type="password"
-                  autoComplete="new-password"
-                  className="w-full h-12 border mt-2 p-2"
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
-                />
+                type="password"
+                autoComplete="new-password"
+                className="w-full h-12 border mt-2 p-2"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorMessage("");
+                }}
+                value={password}
+              />
               </div>
               <div className="mb-4">
                 <label className="text-LabelColor text-sm">
                   Confirm Password
                 </label>
                 <input
-                  type="password"
-                  className={`w-full h-12 border mt-2 p-2 ${error ? 'border-red-500' : ''} focus:border-red-600`}
-                  onChange={(e) =>{ setNPassword(e.target.value); password != nPassword ? error = true : error = false}}
+                type="password"
+                className={`w-full h-12 border mt-2 p-2 ${
+                  nPassword && password !== nPassword ? "border-red-500" : ""
+                }`}
+                  onChange={(e) => {
+                    setNPassword(e.target.value);
+                    setErrorMessage("");
+                  }}
                   value={nPassword}
                 />
               </div>

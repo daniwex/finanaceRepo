@@ -10,11 +10,11 @@ export const POST = async (req, res) => {
         await connectMongoose();
         const getUser = await user.findOne({email})
         if(!getUser){
-            return NextResponse.json({message:"invalid username or password"},{status: 404})
+            return NextResponse.json({message:"invalid username or password, please try again"},{status: 404})
         }
         const checkPassword = await bcrypt.compare(password,getUser.password)
         if(!checkPassword){
-            return NextResponse.json({message:"invalid username or password"},{status: 401})
+            return NextResponse.json({message:"invalid username or password, please try again"},{status: 401})
         }
         cookies().set(
             {  
