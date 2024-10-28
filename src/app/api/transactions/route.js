@@ -19,7 +19,6 @@ export const POST = async (req, res) => {
     if (!u) {
       return NextResponse.json({ message: "user not found" }, { status: 404 });
     }
-    console.log(u)
     const newTransaction = await new transaction({
       user: u._id,
       transactionName,

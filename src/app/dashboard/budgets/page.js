@@ -18,9 +18,35 @@ export default function page() {
   const [summary, setSummary] = useState();
   const [loadBudgets, setLoadBudgets] = useState(false);
   const [data, setData] = useState([]);
+  const [categoryValue, setCategoryValue] = useState(null);
+  const [themeValue, setThemeValue] = useState(null);
+  const [spendValue, setSpendValue] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [budgetId, setBudgetId] = useState(null)
 
-  async function submit(e) {
-    e.preventDefault();
+  async function editBudget(id) {
+    if (categoryValue == null && themeValue == null && spendValue == null && budgetId == null) {
+      return;
+    }
+    try {
+      const budgetDetails = {
+        id,
+        categoryValue,
+        themeValue,
+        spendValue,
+      };
+      const req = await fetch("/api/budget", {
+        method: "PATCH",
+        body: JSON.stringify(budgetDetails),
+      });
+      if (req.ok) {
+        setShowEditModal(false)
+       setLoadBudgets(true);
+      }
+    } catch (error) {}
+  }
+
+  async function submit() {
     if (category == "" || spend == "" || theme == "") {
       return;
     }
@@ -47,17 +73,15 @@ export default function page() {
       console.log(error);
     }
   }
-  async function handleDeleteBudget(budgetId){
-    const data = JSON.stringify (budgetId)
-      try {
-        const req = await fetch("/api/budget", {
-          method: "DELETE",
-          body: data
-        })
-        setLoadBudgets(true);
-      } catch (error) {
-        
-      }
+  async function handleDeleteBudget(budgetId) {
+    const data = JSON.stringify(budgetId);
+    try {
+      const req = await fetch("/api/budget", {
+        method: "DELETE",
+        body: data,
+      });
+      setLoadBudgets(true);
+    } catch (error) {}
   }
 
   useEffect(() => {
@@ -66,7 +90,6 @@ export default function page() {
         const req = await fetch("/api/budget");
         if (req.ok) {
           const res = await req.json();
-          // console.log(res)
           setBudgets(res.budgets);
           setTransactions(res.transaction);
           const d = [
@@ -112,7 +135,9 @@ export default function page() {
         </button>
       </div>
       {!chartData || !summary ? (
-        <div className="w-full h-screen flex justify-center items-center text-2xl">Loading</div>
+        <div className="w-full h-screen flex justify-center items-center text-2xl">
+          Loading
+        </div>
       ) : (
         <div className="block sm:flex mt-10">
           <div className="h-fit py-10 px-5 bg-white grid grid-col-1 sm:w-2/5 sm:mr-5 rounded-lg">
@@ -125,7 +150,21 @@ export default function page() {
             </div>
           </div>
           <div className="sm:w-3/6">
-            {data ? <BudgetsContainer data={data} handleDeleteBudget={handleDeleteBudget} /> : <></>}
+            {data ? (
+              <BudgetsContainer
+                data={data}
+                handleDeleteBudget={handleDeleteBudget}
+                showModal={(data) => {
+                  setShowEditModal(true);
+                  setCategoryValue(data.category)
+                  setSpendValue(data.spend)
+                  setThemeValue(data.theme)
+                  setBudgetId(data.id)
+                }}
+              />
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       )}
@@ -136,7 +175,25 @@ export default function page() {
           onchangeCategory={(e) => setCategory(e.target.value)}
           onchangeSpend={(e) => setSpend(e.target.value)}
           onchangeTheme={(e) => setTheme(e.target.value)}
-          onsubmit={(e) => submit(e)}
+          onsubmit={() => submit()}
+          btnName="Add budget"
+        />
+      ) : (
+        <></>
+      )}
+
+      {showEditModal ? (
+        <ModalBudget
+          closeBtn={() => setShowEditModal(false)}
+          modalName="Edit Budget"
+          btnName="Edit Budget"
+          categoryValue={categoryValue}
+          spendValue={spendValue}
+          themeValue={themeValue}
+          onchangeCategory={(e) => setCategoryValue(e.target.value)}
+          onchangeSpend={(e) => setSpendValue(e.target.value)}
+          onchangeTheme ={(e) => setThemeValue(e.target.value)}
+          onsubmit={() => editBudget(budgetId)}
         />
       ) : (
         <></>

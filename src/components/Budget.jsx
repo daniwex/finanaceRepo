@@ -6,10 +6,22 @@ import { useState } from "react";
 import { calculateProgress, calculateSpent } from "@/utility/utils";
 import BudgetOptions from "./BudgetOptions";
 
-export default function Budget({ budget, handleDeleteBudget }) {
+export default function Budget({
+  budget,
+  handleDeleteBudget,
+  showModal, 
+}) {
   const progressPercentage = calculateProgress(budget[2], budget.slice(4));
   const spentValue = calculateSpent(budget.slice(4));
-  const [openOptions, setOpenOptions] = useState(false)
+  const [openOptions, setOpenOptions] = useState(false);
+  const data = {
+    id:budget[1],
+    category:budget[0],
+    spend:budget[2],
+    theme: budget[3]
+  }
+
+   console.log(budget);
 
   return (
     <div className="bg-white h-fit p-10 rounded-lg">
@@ -23,14 +35,13 @@ export default function Budget({ budget, handleDeleteBudget }) {
             <b>{budget[0][0].toUpperCase() + budget[0].slice(1)}</b>
           </div>
           <div className="relative">
-            <button
-              onClick={() => setOpenOptions(!openOptions)}
-            >
+            <button onClick={() => setOpenOptions(!openOptions)}>
               <img src="/assets/images/icon-ellipsis.svg" />
             </button>
             {openOptions ? (
               <BudgetOptions
                 deleteBudget={() => handleDeleteBudget(budget[1])}
+                editBudget={() => showModal(data)}
               />
             ) : (
               <></>
@@ -68,7 +79,11 @@ export default function Budget({ budget, handleDeleteBudget }) {
               <b> Latest Spending</b>
             </div>
             {budget.slice(4).map((el, index) => (
-              <div className={`flex justify-between mb-3  ${index != budget.slice(4).length - 1 ? 'border-b' : '' } pb-1`}>
+              <div
+                className={`flex justify-between mb-3  ${
+                  index != budget.slice(4).length - 1 ? "border-b" : ""
+                } pb-1`}
+              >
                 <div>
                   <b className="text-sm">{el[1]} </b>
                 </div>
