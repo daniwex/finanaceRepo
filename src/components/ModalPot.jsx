@@ -1,15 +1,15 @@
 "use client";
 
-export default function ModalBudget({
+export default function ModalPot({
   closeBtn,
   onsubmit,
-  categoryValue,
-  onchangeCategory,
-  spendValue,
-  onchangeSpend,
+  targetValue,
+  onchangeTarget,
+  potTitle,
+  onChangePotTitle,
   themeValue,
   onchangeTheme,
-  modalName = "Add New Budget",
+  modalName = "Add Pot",
   btnName,
 }) {
   return (
@@ -22,8 +22,8 @@ export default function ModalBudget({
           </button>
         </div>
         <p className="text-xs text-LabelColor mt-5">
-          Choose a category to set a spending budget, These categories can help
-          you monitor spending
+          Create a pot to set saving tergets. These can help keep you on track
+          as you save for special purchases
         </p>
         <form
           onSubmit={(e) => {
@@ -33,31 +33,23 @@ export default function ModalBudget({
           className="mt-5"
         >
           <div className="text-xs mb-5">
-            <label className="block">Budget Category</label>
-            <select
-              value={categoryValue}
-              className="w-full mt-3 border py-3 px-3"
-              onChange={(e) => onchangeCategory(e)}
-            >
-              <option value="entertainment">Entertainment</option>
-              <option value="bills">Bills</option>
-              <option value="groceries">Groceries</option>
-              <option value="dining">Dining Out</option>
-              <option value="transportation">Transportation</option>
-              <option value="personal">Personal Care</option>
-              <option value="education">Education</option>
-              <option value="lifestyle">Lifestyle</option>
-              <option value="shopping">Shopping</option>
-              <option value="general">General</option>
-            </select>
+            <label className="block">Pot Name</label>
+            <input
+              type="text"
+              className="border px-3 mt-3 py-3 w-full"
+              placeholder="e.g. Rainy Days"
+              value={potTitle}
+              onChange={(e) => onChangePotTitle(e)}
+            />
           </div>
           <div className="text-xs mb-5">
-            <label className="block">Minimum Spend</label>
+            <label className="block">Target</label>
             <input
               placeholder="e.g. 2000"
+              type="Number"
               className="border px-3 mt-3 py-3 w-full"
-              value={spendValue}
-              onChange={(e) => onchangeSpend(e)}
+              value={targetValue}
+              onChange={(e) => onchangeTarget(e)}
             />
           </div>
           <div className="text-xs mb-5">

@@ -21,10 +21,8 @@ export default function Budget({
     theme: budget[3]
   }
 
-   console.log(budget);
-
   return (
-    <div className="bg-white h-fit p-10 rounded-lg">
+    <div className="bg-white h-fit p-5 rounded-lg">
       {
         <div className="flex justify-between items-center">
           <div className="relative flex items-center">
